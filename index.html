@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Version 11: Gruben-Respawn an letzter sicherer Bodenposition -->
+<!-- Version 13: Gruben-Respawn aus zuletzt sicherer Bodenposition mit Sicherheitsabstand -->
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -40,7 +40,7 @@ ctx.imageSmoothingEnabled=false;
 const G=['#0f380f','#306230','#8bac0f','#9bbc0f'];
 const worldW=760,groundY=119;
 const pits=[{x:150,w:25,kind:'small'},{x:470,w:34,kind:'wide'}];
-let keys={},scene='title',paused=false,frame=0,cam=0,score=0,lives=5,hasShears=false,shearsUsed=false,landingSoundPending=false,spikeSafeX=18,pitSafeBySide=pits.map(()=>({left:18,right:18})),fallingPitKind='pit',fallingPitIndex=-1,fallingPitSide='left';
+let keys={},scene='title',paused=false,frame=0,cam=0,score=0,lives=5,hasShears=false,shearsUsed=false,landingSoundPending=false,spikeSafeX=18,lastSafeGroundX=18,pitSafeBySide=pits.map(()=>({left:null,right:null})),fallingPitKind='pit',fallingPitIndex=-1,fallingPitSide='left';
 let sylvieMet=false,sylvieIntro=false,introPage=0,sylvieHelp='',sylvieShowHint=false,gameMessage='',messageTimer=0,jumpQueued=false,spikesActive=false,spikeHit=false,pendingSylvie=false,sylvieHint=false,gameoverChoice=0,fallingIntoPit=false,toolPickup=false;
 let worldLostLives=0,trapFailures={pit:0,widePit:0,spikes:0,other:0},pauseScreen="main",pauseChoice=0,sallyTips=[],sallyTipScroll=0;
 let player={x:18,y:95,vx:0,vy:0,w:9,h:12,on:false,face:1};
@@ -162,7 +162,7 @@ function drawLevel(){
   if(paused){rect(12,27,136,90,G[0]);rect(14,29,132,86,G[3]);if(pauseScreen==="main"){txt("PAUSE",80,41,9,G[0],"center");const opts=["WEITERSPIELEN","STEUERUNG"];if(sylvieMet)opts.push("SALLYS TIPPS");opts.forEach((v,i)=>{if(i===pauseChoice)rect(25,47+i*17,110,13,G[1]);txt((i===pauseChoice?"> ":"  ")+v,80,56+i*17,7,i===pauseChoice?G[3]:G[0],"center")});txt("PFEILE + A: AUSWAHL",80,105,5,G[1],"center")}else if(pauseScreen==="controls"){txt("STEUERUNG",80,43,8,G[0],"center");txt("PFEILE: BEWEGEN",80,59,6,G[0],"center");txt("A: SPRINGEN",80,71,6,G[0],"center");txt("B: WERKZEUG BENUTZEN",80,83,6,G[0],"center");txt("START: PAUSE",80,95,6,G[0],"center");txt("B: ZURUECK",80,107,5,G[1],"center")}else{txt("SALLYS TIPPS",80,43,8,G[0],"center");if(!sallyTips.length){txt("SALLY HAT DIR NOCH",80,62,5,G[0],"center");txt("KEINE TIPPS GEGEBEN.",80,71,5,G[0],"center");txt("B: ZURUECK",80,88,5,G[1],"center")}else{const start=Math.max(0,Math.min(sallyTipScroll,sallyTips.length-1));for(let i=0;i<3;i++){const idx=start+i;if(idx<sallyTips.length)txt((idx+1)+". "+sallyTips[idx],80,57+i*12,5,G[0],"center")}txt("TIPP "+(start+1)+"/"+sallyTips.length,80,94,5,G[1],"center");}txt("PFEILE: LESEN  B: ZURUECK",80,105,5,G[1],"center")}}
 }
 function title(){drawBG(frame*.2);rect(12,15,136,48,G[3]);rect(13,16,134,46,G[2]);txt("STICKY'S",80,30,12,G[0],'center');txt('RESCUE QUEST',80,43,10,G[0],'center');txt('EIN ABENTEUER BEGINNT',80,57,5,G[1],'center');txt('START GAME',80,91,8,G[0],'center');txt('A DRUECKEN',80,102,6,G[1],'center');txt('GAME BOY DMG PROTOTYP',80,134,5,G[1],'center')}
-function reset(){landingSoundPending=false;pendingSylvie=false;sylvieHint=false;pauseScreen="main";pauseChoice=0;sallyTips=[];sallyTipScroll=0;worldLostLives=0;trapFailures={pit:0,widePit:0,spikes:0,other:0};toolPickup=false;sylvieShowHint=false;gameoverChoice=0;fallingIntoPit=false;player={x:18,y:95,vx:0,vy:0,w:9,h:12,on:false,face:1};spikeSafeX=player.x;pitSafeBySide=pits.map(()=>({left:player.x,right:player.x}));fallingPitKind='pit';fallingPitIndex=-1;fallingPitSide='left';cam=0;hasShears=false;shearsUsed=false;spikesActive=false;spikeHit=false;cartridge.taken=false;bush.cleared=false;sylvieMet=false;sylvieIntro=false;introPage=0;gameMessage='';messageTimer=0;score=0;lives=5;paused=false}
+function reset(){landingSoundPending=false;pendingSylvie=false;sylvieHint=false;pauseScreen="main";pauseChoice=0;sallyTips=[];sallyTipScroll=0;worldLostLives=0;trapFailures={pit:0,widePit:0,spikes:0,other:0};toolPickup=false;sylvieShowHint=false;gameoverChoice=0;fallingIntoPit=false;player={x:18,y:95,vx:0,vy:0,w:9,h:12,on:false,face:1};spikeSafeX=player.x;lastSafeGroundX=player.x;pitSafeBySide=pits.map(()=>({left:null,right:null}));fallingPitKind='pit';fallingPitIndex=-1;fallingPitSide='left';cam=0;hasShears=false;shearsUsed=false;spikesActive=false;spikeHit=false;cartridge.taken=false;bush.cleared=false;sylvieMet=false;sylvieIntro=false;introPage=0;gameMessage='';messageTimer=0;score=0;lives=5;paused=false}
 function showMessage(s,t=65){gameMessage=s;messageTimer=t}
 // In diesem Prototyp ist die Cartridge der optionale Fundgegenstand. Die Gartenschere ist Pflichtwerkzeug.
 function allLevelFindsCollected(){return cartridge.taken}
@@ -207,11 +207,11 @@ function update(){
   player.vy+=.215;if(player.vy>3.2)player.vy=3.2;player.y+=player.vy;
   // Pit edges have no floor. Walking into them causes a fall; jumping is required.
   let pit=inPitAt(player.x);
-  if(pit&&player.y>=groundY-player.h&&player.vy>=0&&!fallingIntoPit){fallingIntoPit=true;fallingPitKind=pit.kind==='wide'?'widePit':'pit';fallingPitIndex=pits.indexOf(pit);fallingPitSide=(oldX+player.w/2)<pit.x?'left':'right'}
+  if(pit&&player.y>=groundY-player.h&&player.vy>=0&&!fallingIntoPit){fallingIntoPit=true;fallingPitKind=pit.kind==='wide'?'widePit':'pit';fallingPitIndex=pits.indexOf(pit);fallingPitSide=(oldX+player.w/2)<pit.x?'left':'right';const safeLimit=fallingPitSide==='left'?pit.x-18-player.w/2:pit.x+pit.w+18-player.w/2;pitSafeBySide[fallingPitIndex][fallingPitSide]=fallingPitSide==='left'?Math.min(lastSafeGroundX,safeLimit):Math.max(lastSafeGroundX,safeLimit)}
   if(!pit&&!fallingIntoPit&&player.y>=groundY-player.h&&player.vy>=0){player.y=groundY-player.h;player.vy=0;player.on=true;if(landingSoundPending){playStickyLandingSound();landingSoundPending=false}}else player.on=false;
   // Je Grube beide Seiten getrennt speichern. So bleibt beim Anlaufen von rechts die rechte sichere Position erhalten.
-  if(!pit&&!fallingIntoPit&&player.on){const center=player.x+player.w/2;pits.forEach((q,i)=>{if(center<=q.x-18)pitSafeBySide[i].left=player.x;else if(center>=q.x+q.w+18)pitSafeBySide[i].right=player.x})}
-  if(fallingIntoPit&&player.y>132){const trap=fallingPitKind;const respawnX=pitSafeBySide[fallingPitIndex]?.[fallingPitSide]??player.x;fallingIntoPit=false;fallingPitIndex=-1;loseLife('ABGRUND! EIN LEBEN VERLOREN',respawnX,trap);if(scene==='gameover')return}
+  if(!pit&&!fallingIntoPit&&player.on){lastSafeGroundX=player.x;const center=player.x+player.w/2;pits.forEach((q,i)=>{if(center<=q.x-18)pitSafeBySide[i].left=player.x;else if(center>=q.x+q.w+18)pitSafeBySide[i].right=player.x})}
+  if(fallingIntoPit&&player.y>132){const trap=fallingPitKind;const q=pits[fallingPitIndex];const fallbackX=q?(fallingPitSide==='left'?q.x-18-player.w/2:q.x+q.w+18-player.w/2):lastSafeGroundX;const storedX=pitSafeBySide[fallingPitIndex]?.[fallingPitSide];const respawnX=Number.isFinite(storedX)?storedX:fallbackX;fallingIntoPit=false;fallingPitIndex=-1;loseLife('ABGRUND! EIN LEBEN VERLOREN',respawnX,trap);if(scene==='gameover')return}
   if(player.x>300&&!spikesActive&&player.x<340)spikesActive=true;
   const inSpikeZone=player.x+player.w>330&&player.x<348;
   // Merke die letzte sichere Bodenposition außerhalb der Dornen – von beiden Seiten.
