@@ -279,7 +279,7 @@ function press(k,on){if(on&&!keys[k]&&scene==='exitchoice'&&(k==='a'||k==='b')){
     })});
     // Geschuetzter Setter fuer die oben whitelisted Testfelder.
     Object.defineProperty(window,'__STICKY_TEST_INTERNAL__',{enumerable:false,value:(key,value)=>{
-      const allowed=['lives','score','hasShears','shearsUsed','spikesActive','spikeHit','fallingIntoPit','fallingPitIndex','pendingSylvie','sylvieIntro','sylvieHint','sylvieMet','messageTimer','paused'];
+      const allowed=['lives','score','hasShears','shearsUsed','spikesActive','spikeHit','fallingIntoPit','fallingPitIndex','pendingSylvie','sylvieIntro','sylvieHint','sylvieMet','spikeTrapKnown','sylvieHintRepeat','messageTimer','paused'];
       if(!allowed.includes(key))throw new Error('Unzulaessiges Testfeld: '+key);
       if(['lives','score','messageTimer','fallingPitIndex'].includes(key)&&!Number.isFinite(value))throw new Error('Ungueltiger Testwert: '+key);
       if(['hasShears','shearsUsed','spikesActive','spikeHit','fallingIntoPit','pendingSylvie','sylvieIntro','sylvieHint','sylvieMet','spikeTrapKnown','sylvieHintRepeat','paused'].includes(key)&&typeof value!=='boolean')throw new Error('Ungueltiger Testwert: '+key);
