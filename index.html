@@ -242,7 +242,7 @@ function press(k,on){if(on&&!keys[k]&&scene==='exitchoice'&&(k==='a'||k==='b')){
   // Ausschliesslich fuer automatisierte Browser-Tests; im normalen Spiel nicht vorhanden.
   if(new URLSearchParams(window.location.search).get('test')==='1'){
     const testSnapshot=()=>({
-      scene,player:{...player},lives,score,hasShears,shearsUsed,
+      scene,player:{...player},lives,score,hasShears,shearsUsed,sylvieMet,
       cartridgeTaken:cartridge.taken,bushCleared:bush.cleared,
       spikesActive,spikeHit,spikeKnockback:spikeKnockback?{...spikeKnockback}:null,
       pitSafeBySide:pitSafeBySide.map(side=>({...side})),
@@ -271,7 +271,7 @@ function press(k,on){if(on&&!keys[k]&&scene==='exitchoice'&&(k==='a'||k==='b')){
         if(patch.pitSafeBySide)pitSafeBySide=patch.pitSafeBySide.map(side=>({left:side.left??null,right:side.right??null}));
         if(patch.cartridgeTaken!==undefined)cartridge.taken=Boolean(patch.cartridgeTaken);
         if(patch.bushCleared!==undefined)bush.cleared=Boolean(patch.bushCleared);
-        const scalar={lives:'lives',score:'score',hasShears:'hasShears',shearsUsed:'shearsUsed',spikesActive:'spikesActive',spikeHit:'spikeHit',fallingIntoPit:'fallingIntoPit',fallingPitIndex:'fallingPitIndex',pendingSylvie:'pendingSylvie',sylvieIntro:'sylvieIntro',sylvieHint:'sylvieHint',messageTimer:'messageTimer',paused:'paused'};
+        const scalar={lives:'lives',score:'score',hasShears:'hasShears',shearsUsed:'shearsUsed',spikesActive:'spikesActive',spikeHit:'spikeHit',fallingIntoPit:'fallingIntoPit',fallingPitIndex:'fallingPitIndex',pendingSylvie:'pendingSylvie',sylvieIntro:'sylvieIntro',sylvieHint:'sylvieHint',sylvieMet:'sylvieMet',messageTimer:'messageTimer',paused:'paused'};
         for(const [key,target] of Object.entries(scalar))if(patch[key]!==undefined)window.__STICKY_TEST_INTERNAL__?.(target,patch[key]);
         if(patch.spikeKnockback!==undefined)spikeKnockback=patch.spikeKnockback?{...patch.spikeKnockback}:null;
         keys={};render();return testSnapshot();
@@ -282,8 +282,8 @@ function press(k,on){if(on&&!keys[k]&&scene==='exitchoice'&&(k==='a'||k==='b')){
       const allowed=['lives','score','hasShears','shearsUsed','spikesActive','spikeHit','fallingIntoPit','fallingPitIndex','pendingSylvie','sylvieIntro','sylvieHint','messageTimer','paused'];
       if(!allowed.includes(key))throw new Error('Unzulaessiges Testfeld: '+key);
       if(['lives','score','messageTimer','fallingPitIndex'].includes(key)&&!Number.isFinite(value))throw new Error('Ungueltiger Testwert: '+key);
-      if(['hasShears','shearsUsed','spikesActive','spikeHit','fallingIntoPit','pendingSylvie','sylvieIntro','sylvieHint','paused'].includes(key)&&typeof value!=='boolean')throw new Error('Ungueltiger Testwert: '+key);
-      if(key==='lives')lives=value;else if(key==='score')score=value;else if(key==='hasShears')hasShears=value;else if(key==='shearsUsed')shearsUsed=value;else if(key==='spikesActive')spikesActive=value;else if(key==='spikeHit')spikeHit=value;else if(key==='fallingIntoPit')fallingIntoPit=value;else if(key==='fallingPitIndex')fallingPitIndex=value;else if(key==='pendingSylvie')pendingSylvie=value;else if(key==='sylvieIntro')sylvieIntro=value;else if(key==='sylvieHint')sylvieHint=value;else if(key==='messageTimer')messageTimer=value;else if(key==='paused')paused=value;
+      if(['hasShears','shearsUsed','spikesActive','spikeHit','fallingIntoPit','pendingSylvie','sylvieIntro','sylvieHint','sylvieMet','paused'].includes(key)&&typeof value!=='boolean')throw new Error('Ungueltiger Testwert: '+key);
+      if(key==='lives')lives=value;else if(key==='score')score=value;else if(key==='hasShears')hasShears=value;else if(key==='shearsUsed')shearsUsed=value;else if(key==='spikesActive')spikesActive=value;else if(key==='spikeHit')spikeHit=value;else if(key==='fallingIntoPit')fallingIntoPit=value;else if(key==='fallingPitIndex')fallingPitIndex=value;else if(key==='pendingSylvie')pendingSylvie=value;else if(key==='sylvieIntro')sylvieIntro=value;else if(key==='sylvieHint')sylvieHint=value;else if(key==='sylvieMet')sylvieMet=value;else if(key==='messageTimer')messageTimer=value;else if(key==='paused')paused=value;
     }});
   }
   loop();
