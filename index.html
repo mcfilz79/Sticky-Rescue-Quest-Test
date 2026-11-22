@@ -12,6 +12,7 @@
 <body>
 <div class="wrap">
   <div class="screen"><canvas id="game" width="160" height="144" aria-label="Sticky's Rescue Quest Spielbildschirm"></canvas></div>
+  <audio id="sfxShears" preload="auto" src="https://mcfilz79.github.io/Sticky-Rescue-Quest-Test/sounds/audio/world-1/werkzeug_schere_schnipp.wav"></audio>
   <div class="hint" id="hint">Tippe auf START. Pfeile bewegen · A springen · B Werkzeug benutzen · START Pause</div>
   <div class="controls">
     <div class="pad"><div class="empty"></div><button class="key" data-key="up">▲</button><div class="empty"></div><button class="key" data-key="left">◀</button><button class="key" data-key="down">▼</button><button class="key" data-key="right">▶</button></div>
@@ -21,6 +22,8 @@
 <script>
 (()=>{
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),hint=document.getElementById('hint');
+const shearsSound=document.getElementById('sfxShears');
+function playShearsSound(){if(!shearsSound)return;try{shearsSound.pause();shearsSound.currentTime=0;const playback=shearsSound.play();if(playback&&playback.catch)playback.catch(()=>{});}catch(error){}}
 ctx.imageSmoothingEnabled=false;
 const G=['#0f380f','#306230','#8bac0f','#9bbc0f'];
 const worldW=760,groundY=119;
@@ -117,7 +120,7 @@ function action(){
   if(messageTimer>0){messageTimer=0;gameMessage='';toolPickup=false;if(pendingSylvie&&lives>0){pendingSylvie=false;if(sylvieMet){recordSallyTip(sallyTrapTip(sylvieHelp));sylvieHint=true}else{sylvieIntro=true;introPage=0}}return}
   if(paused){paused=false;return}
   if(!bush.cleared&&nearBush()){
-    if(hasShears){bush.cleared=true;shearsUsed=true;score+=5;showMessage('RANKEN ZERSCHNITTEN!',65);return;}
+    if(hasShears){playShearsSound();bush.cleared=true;shearsUsed=true;score+=5;showMessage('RANKEN ZERSCHNITTEN!',65);return;}
     showMessage('B DRUECKEN!',85);return;
   }
   if(bush.cleared&&sylvieMet&&player.x>700){scene='complete';return}
