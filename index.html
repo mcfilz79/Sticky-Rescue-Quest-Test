@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Version 15: Gruben-Anlaufseite beim ersten Kantenübertritt erfassen; je Grube und Seite sichere Bodenposition speichern -->
+<!-- Version 16: Cartridge-Punkte nach Master-Referenz; optionale, nur per ?test=1 aktive Playwright-Test-Schnittstelle -->
 <html lang="de">
 <head>
 <meta charset="utf-8">
@@ -225,7 +225,7 @@ function update(){
   if(spikesActive&&!spikeHit&&inSpikeZone&&player.on){spikeHit=true;const approachSide=player.vx>0?'left':player.vx<0?'right':(player.face>=0?'left':'right');const safeTarget=approachSide==='left'?330-player.w-18:348+18;loseLife('DORNEN! EIN LEBEN VERLOREN',safeTarget,'spikes',safeTarget);if(scene==='gameover'||spikeKnockback)return}
   if(!inSpikeZone)spikeHit=false;
   // Die Cartridge wird nur bei tatsächlicher Berührung eingesammelt; ein Sprung darüber ist möglich.
-  if(!cartridge.taken&&player.x+player.w>cartridge.x&&player.x<cartridge.x+6&&player.y+player.h>cartridge.y&&player.y<cartridge.y+7){cartridge.taken=true;if(lives<5)lives++;else score+=100;showMessage('CARTRIDGE GEFUNDEN!',65)}
+  if(!cartridge.taken&&player.x+player.w>cartridge.x&&player.x<cartridge.x+6&&player.y+player.h>cartridge.y&&player.y<cartridge.y+7){cartridge.taken=true;if(lives<5)lives++;else score+=10;showMessage('CARTRIDGE GEFUNDEN!',65)}
   if(!hasShears&&player.x>220&&player.x<250&&player.y<103){hasShears=true;score+=15;toolPickup=true;showMessage('GARTENSCHERE +15',100)}
   player.x=Math.max(0,Math.min(worldW-12,player.x));cam=Math.max(0,Math.min(worldW-160,player.x-65));
   // Am Ausgang wird nicht mehr automatisch gewechselt: erst die passende Entscheidung anzeigen.
@@ -238,6 +238,54 @@ function press(k,on){if(on&&!keys[k]&&scene==='exitchoice'&&(k==='a'||k==='b')){
   const map={ArrowLeft:'left',ArrowRight:'right',ArrowUp:'up',ArrowDown:'down',KeyA:'a',KeyB:'b',Enter:'start',Space:'a'};
   window.addEventListener('keydown',e=>{if(map[e.code]){e.preventDefault();if(!keys[map[e.code]])press(map[e.code],true)}});
   window.addEventListener('keyup',e=>{if(map[e.code])press(map[e.code],false)});
+
+  // Ausschliesslich fuer automatisierte Browser-Tests; im normalen Spiel nicht vorhanden.
+  if(new URLSearchParams(window.location.search).get('test')==='1'){
+    const testSnapshot=()=>({
+      scene,player:{...player},lives,score,hasShears,shearsUsed,
+      cartridgeTaken:cartridge.taken,bushCleared:bush.cleared,
+      spikesActive,spikeHit,spikeKnockback:spikeKnockback?{...spikeKnockback}:null,
+      pitSafeBySide:pitSafeBySide.map(side=>({...side})),
+      fallingIntoPit,fallingPitIndex,pendingSylvie,sylvieIntro,sylvieHint,
+      messageTimer,paused,pits:pits.map(p=>({...p})),groundY,worldW
+    });
+    Object.defineProperty(window,'__STICKY_TEST__',{configurable:false,enumerable:false,value:Object.freeze({
+      reset(){
+        reset();scene='title';keys={};frame=0;render();return testSnapshot();
+      },
+      getState(){return testSnapshot()},
+      setState(patch={}){
+        if(patch.scene!==undefined){
+          if(!['title','level','exitchoice','complete','gameover'].includes(patch.scene))throw new Error('Ungueltige Testszenen-Angabe');
+          scene=patch.scene;
+        }
+        if(patch.player){
+          const allowed=['x','y','vx','vy','w','h','on','face'];
+          for(const key of Object.keys(patch.player)){
+            if(!allowed.includes(key))throw new Error('Unzulaessiges Spieler-Testfeld: '+key);
+            const value=patch.player[key];
+            if(key!=='on'&&!Number.isFinite(value))throw new Error('Ungueltiger Spielerwert: '+key);
+            player[key]=value;
+          }
+        }
+        if(patch.pitSafeBySide)pitSafeBySide=patch.pitSafeBySide.map(side=>({left:side.left??null,right:side.right??null}));
+        if(patch.cartridgeTaken!==undefined)cartridge.taken=Boolean(patch.cartridgeTaken);
+        if(patch.bushCleared!==undefined)bush.cleared=Boolean(patch.bushCleared);
+        const scalar={lives:'lives',score:'score',hasShears:'hasShears',shearsUsed:'shearsUsed',spikesActive:'spikesActive',spikeHit:'spikeHit',fallingIntoPit:'fallingIntoPit',fallingPitIndex:'fallingPitIndex',pendingSylvie:'pendingSylvie',sylvieIntro:'sylvieIntro',sylvieHint:'sylvieHint',messageTimer:'messageTimer',paused:'paused'};
+        for(const [key,target] of Object.entries(scalar))if(patch[key]!==undefined)window.__STICKY_TEST_INTERNAL__?.(target,patch[key]);
+        if(patch.spikeKnockback!==undefined)spikeKnockback=patch.spikeKnockback?{...patch.spikeKnockback}:null;
+        keys={};render();return testSnapshot();
+      }
+    })});
+    // Geschuetzter Setter fuer die oben whitelisted Testfelder.
+    Object.defineProperty(window,'__STICKY_TEST_INTERNAL__',{enumerable:false,value:(key,value)=>{
+      const allowed=['lives','score','hasShears','shearsUsed','spikesActive','spikeHit','fallingIntoPit','fallingPitIndex','pendingSylvie','sylvieIntro','sylvieHint','messageTimer','paused'];
+      if(!allowed.includes(key))throw new Error('Unzulaessiges Testfeld: '+key);
+      if(['lives','score','messageTimer','fallingPitIndex'].includes(key)&&!Number.isFinite(value))throw new Error('Ungueltiger Testwert: '+key);
+      if(['hasShears','shearsUsed','spikesActive','spikeHit','fallingIntoPit','pendingSylvie','sylvieIntro','sylvieHint','paused'].includes(key)&&typeof value!=='boolean')throw new Error('Ungueltiger Testwert: '+key);
+      if(key==='lives')lives=value;else if(key==='score')score=value;else if(key==='hasShears')hasShears=value;else if(key==='shearsUsed')shearsUsed=value;else if(key==='spikesActive')spikesActive=value;else if(key==='spikeHit')spikeHit=value;else if(key==='fallingIntoPit')fallingIntoPit=value;else if(key==='fallingPitIndex')fallingPitIndex=value;else if(key==='pendingSylvie')pendingSylvie=value;else if(key==='sylvieIntro')sylvieIntro=value;else if(key==='sylvieHint')sylvieHint=value;else if(key==='messageTimer')messageTimer=value;else if(key==='paused')paused=value;
+    }});
+  }
   loop();
 })();
 </script>
