@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="16" viewBox="0 0 160 16" shape-rendering="crispEdges" role="img" aria-labelledby="title desc">
+<title id="title">HUD-Anzeigen – W1L08 Sturm</title>
+<desc id="desc">Fünf Cartridge-Symbole als Leben, ein dezentes Fragezeichen im Werkzeugfeld, die Levelkennung W1L08 Sturm und Punktestand 01250. Die UI-Formen sind aus der vorhandenen HUD-Referenz übernommen.</desc>
+<g fill="#202020">
+  <rect x="1" y="3" width="6" height="9"/><rect x="2" y="2" width="4" height="2"/>
+  <rect x="8" y="3" width="6" height="9"/><rect x="9" y="2" width="4" height="2"/>
+  <rect x="15" y="3" width="6" height="9"/><rect x="16" y="2" width="4" height="2"/>
+  <rect x="22" y="3" width="6" height="9"/><rect x="23" y="2" width="4" height="2"/>
+  <rect x="29" y="3" width="6" height="9"/><rect x="30" y="2" width="4" height="2"/>
+</g>
+<g fill="#f4f4f4">
+  <rect x="2" y="5" width="4" height="5"/><rect x="9" y="5" width="4" height="5"/>
+  <rect x="16" y="5" width="4" height="5"/><rect x="23" y="5" width="4" height="5"/>
+  <rect x="30" y="5" width="4" height="5"/>
+</g>
+<g fill="none" stroke="#a0a0a0" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" transform="translate(-3.2 0)">
+  <path d="M56.8 5.2Q57.2 3.4 59.7 3.4Q62.3 3.4 62.5 5.5Q62.6 7.1 60.4 8.3Q59.8 8.7 59.8 9.7"/>
+</g><path d="M56.6 11.1Q57.8 10.8 58 11.8Q57 12.6 56.6 11.1Z" fill="#a0a0a0"/>
+<g fill="#202020" font-family="monospace" font-size="6" font-weight="bold" text-rendering="geometricPrecision">
+  <text x="99" y="10.5" text-anchor="middle">W1L08 – Sturm</text>
+  <text x="142.5" y="10.5" text-anchor="middle">01250</text>
+</g>
+</svg>
