@@ -13,7 +13,7 @@ main{width:min(100% - 32px,900px);margin:0 auto;padding:28px 0 40px}
 header{margin-bottom:20px}.eyebrow{margin:0 0 6px;color:#b7c995;font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
 h1{margin:0;font-size:clamp(1.5rem,4vw,2.2rem);line-height:1.15}.intro{max-width:68ch;color:var(--muted);margin:12px 0 0}
 .card{border:1px solid var(--line);border-radius:14px;background:var(--panel);padding:clamp(14px,3vw,24px)}
-.stage{width:min(100%,640px);margin:0 auto}
+.stage{width:480px;max-width:100%;margin:0 auto}
 .screen{position:relative;width:100%;aspect-ratio:160/144;background:#f4f4f4;overflow:hidden;image-rendering:pixelated}
 .screen img{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;image-rendering:pixelated}
 .screen .cutscene,.screen .hud-frame{mix-blend-mode:multiply}
@@ -23,7 +23,7 @@ figcaption{margin:14px auto 0;max-width:640px;color:var(--muted);font-size:.92re
 .detail{border:1px solid var(--line);border-radius:10px;padding:12px 14px;color:var(--muted);font-size:.9rem}
 .detail strong{display:block;color:var(--ink);margin-bottom:4px}
 a{color:#d2e6a8}
-@media(max-width:560px){main{width:min(100% - 20px,900px);padding-top:20px}.details{grid-template-columns:1fr}}
+@media(max-width:545px){.stage{width:320px}}\n@media(max-width:368px){.stage{width:160px}}\n@media(max-width:560px){main{width:min(100% - 20px,900px);padding-top:20px}.details{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
