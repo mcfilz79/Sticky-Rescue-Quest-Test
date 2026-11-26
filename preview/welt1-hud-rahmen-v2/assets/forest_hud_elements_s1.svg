@@ -1,18 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="160" height="16" viewBox="0 0 160 16" shape-rendering="crispEdges" role="img" aria-labelledby="title desc">
 <title id="title">HUD-Anzeigen – W1L08 Sturm</title>
-<desc id="desc">Verkleinerte fünf Cartridge-Symbole und ein zentriertes Fragezeichen mit mindestens einem Pixel Abstand zu HUD-Rahmen und Trennern; Levelkennung und Punktestand bleiben wie in der vorhandenen Referenz.</desc>
-<!-- Five reduced life cartridges. Each is 4×8 px with clear space around the group. -->
-<g fill="#202020">
-  <rect x="6" y="5" width="4" height="7"/><rect x="7" y="4" width="2" height="1"/>
-  <rect x="12" y="5" width="4" height="7"/><rect x="13" y="4" width="2" height="1"/>
-  <rect x="18" y="5" width="4" height="7"/><rect x="19" y="4" width="2" height="1"/>
-  <rect x="24" y="5" width="4" height="7"/><rect x="25" y="4" width="2" height="1"/>
-  <rect x="30" y="5" width="4" height="7"/><rect x="31" y="4" width="2" height="1"/>
-</g>
-<g fill="#f4f4f4">
-  <rect x="7" y="6" width="2" height="4"/><rect x="13" y="6" width="2" height="4"/>
-  <rect x="19" y="6" width="2" height="4"/><rect x="25" y="6" width="2" height="4"/>
-  <rect x="31" y="6" width="2" height="4"/>
+<desc id="desc">Fünf gleich große Cartridge-Symbole mit deutlichem Abstand oben und unten zum HUD-Rahmen; das Werkzeug-Fragezeichen ist zentriert. Levelkennung und Punktestand entsprechen der vorhandenen Referenz.</desc>
+<defs>
+  <g id="cartridge" fill="#202020">
+    <rect x="0" y="1" width="4" height="5"/>
+    <rect x="1" y="0" width="2" height="1"/>
+  </g>
+  <g id="cartridge-window" fill="#f4f4f4">
+    <rect x="1" y="2" width="2" height="3"/>
+  </g>
+</defs>
+<!-- Five identical 4×6 px life cartridges, evenly spaced and centered in the life area. -->
+<g>
+  <use href="#cartridge" x="6" y="5"/><use href="#cartridge-window" x="6" y="5"/>
+  <use href="#cartridge" x="12" y="5"/><use href="#cartridge-window" x="12" y="5"/>
+  <use href="#cartridge" x="18" y="5"/><use href="#cartridge-window" x="18" y="5"/>
+  <use href="#cartridge" x="24" y="5"/><use href="#cartridge-window" x="24" y="5"/>
+  <use href="#cartridge" x="30" y="5"/><use href="#cartridge-window" x="30" y="5"/>
 </g>
 <!-- Reduced version of the existing stylized placeholder, centered in the tool area. -->
 <g transform="translate(15.806 2.24) scale(.72)">
