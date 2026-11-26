@@ -28,6 +28,7 @@ const canvas=document.getElementById('game'),ctx=canvas.getContext('2d'),hint=do
 const jumpSound=document.getElementById('sfxJump'),stickyLandingSound=document.getElementById('sfxStickyLanding'),shearsSound=document.getElementById('sfxShears');
 const forestHudFrame=new Image();forestHudFrame.src='assets/forest_hud_s1.svg';
 const forestHudValues=new Image();forestHudValues.src='assets/forest_hud_elements_s1.svg';
+const forestCutsceneFrame=new Image();forestCutsceneFrame.src='assets/forest_cutscene_s1.svg';
 const sallyShortSound=new Audio('https://mcfilz79.github.io/Sticky-Rescue-Quest-Test/sounds/audio/characters/sally_kurz.wav'),sallyMediumSound=new Audio('https://mcfilz79.github.io/Sticky-Rescue-Quest-Test/sounds/audio/characters/sally_mittel.wav'),sallyLongSound=new Audio('https://mcfilz79.github.io/Sticky-Rescue-Quest-Test/sounds/audio/characters/sally_lang.wav');
 function playSound(sound){if(!sound)return;try{sound.pause();sound.currentTime=0;const playback=sound.play();if(playback&&playback.catch)playback.catch(()=>{});}catch(error){}}
 function playJumpSound(){playSound(jumpSound)}
@@ -102,33 +103,35 @@ function drawPixelText(value,centerX,y,color){
   }
 }
 function drawHud(){
-  const hudInk="#202020";
-  // Approved World 1 frame is drawn unchanged, cropped to the 16 px status strip.
   if(forestHudFrame.complete&&forestHudFrame.naturalWidth){
     ctx.drawImage(forestHudFrame,0,0,160,16,0,0,160,16);
+    // Reserve room for the documented +1 to +3 display by widening the life field.
+    // Source frame art stays intact; only its existing divider strips move in this test build.
+    for(const x of [38,71,123]){
+      rect(x,4,4,8,G[3]);
+      ctx.drawImage(forestHudFrame,x,0,4,16,x+6,0,4,16);
+    }
   }else{
-    rect(0,0,160,16,"#f4f4f4");
+    rect(0,0,160,16,G[3]);
   }
-  // Draw the approved identical cartridge symbol once per remaining life.
   if(forestHudValues.complete&&forestHudValues.naturalWidth){
+    const positions=lives>5?[1,8,15,22,29]:[5,12,19,26,33];
     for(let i=0;i<Math.min(lives,5);i++){
-      const x=3+i*7;
-      ctx.drawImage(forestHudValues,x,5,6,6,x,5,6,6);
+      const x=positions[i];
+      ctx.drawImage(forestHudValues,3+i*7,5,6,6,x,5,6,6);
     }
   }
-  if(lives>5)drawPixelText("+"+(lives-5),40,5,hudInk);
-  // The approved world-specific question placeholder is centered in the tool field.
+  if(lives>5)drawPixelText("+"+(lives-5),36,5,G[0]);
+  // The approved, world-specific placeholder is shifted with the tool field.
   if(!hasShears&&forestHudValues.complete&&forestHudValues.naturalWidth){
-    ctx.drawImage(forestHudValues,42,0,33,16,42,0,33,16);
+    ctx.drawImage(forestHudValues,42,0,33,16,48,0,33,16);
   }else if(hasShears){
-    // Existing shears drawing shifted to the tool field's center; its pixels are unchanged.
-    rect(53,4,2,2,hudInk);rect(59,4,2,2,hudInk);
-    rect(54,6,1,3,hudInk);rect(59,6,1,3,hudInk);
-    rect(56,7,2,1,hudInk);rect(55,9,2,1,hudInk);rect(57,9,2,1,hudInk);
+    rect(59,4,2,2,G[0]);rect(65,4,2,2,G[0]);
+    rect(60,6,1,3,G[0]);rect(65,6,1,3,G[0]);
+    rect(62,7,2,1,G[0]);rect(61,9,2,1,G[0]);rect(63,9,2,1,G[0]);
   }
-  // Existing pixel font, centered in the approved level and score fields.
-  drawPixelText("W1L01 – WALD",99,5,hudInk);
-  drawPixelText(String(score).padStart(6,"0"),143.5,5,hudInk);
+  drawPixelText("W1L01 – WALD",105,5,G[0]);
+  drawPixelText(String(score).padStart(6,"0"),146.5,5,G[0]);
 }
 function drawLevel(){
   drawBG(cam);
@@ -145,6 +148,7 @@ function drawLevel(){
   // Exit is deliberately hidden until both the shears obstacle and sally's introduction are complete.
   if(bush.cleared&&sallyMet){let ex=720-cam;if(ex>-20&&ex<170){rect(ex,groundY-22,14,22,G[0]);rect(ex+3,groundY-18,8,18,G[2]);txt('>',ex+7,groundY-8,7,G[0],'center')}}
   sticky(player.x-cam,player.y);
+  if((sallyIntro||sallyHint)&&forestCutsceneFrame.complete&&forestCutsceneFrame.naturalWidth)ctx.drawImage(forestCutsceneFrame,0,96,160,40,0,96,160,40);
   drawHud();
   if(gameMessage&&messageTimer>0){
     rect(12,49,136,34,G[0]);rect(14,51,132,30,G[3]);
@@ -156,7 +160,13 @@ function drawLevel(){
     }else{txt(gameMessage,80,64,6,G[0],'center');txt('A WEITER',80,76,5,G[1],'center')}
   }
   
-  if(sallyHint){rect(7,45,146,54,G[0]);rect(9,47,142,50,G[3]);sally(15,64);txt(sallyHintRepeat?'DU KENNST DIE FALLE DOCH SCHON!':sallyHelp==='spikes'?'PASS AUF DIE DORNEN AUF!':'DU SCHAFFST DAS!',87,61,5,G[0],'center');txt(sallyHintRepeat?'ICH ERKLAERE ES NOCH EINMAL.':'ICH ZEIGE DIR DEN SPRUNG.',87,70,5,G[0],'center');txt(sallyHelp==='widePit'?'GROSSE LUECKEN: A LAENGER HALTEN!':sallyHelp==='pit'?'SPRINGE MIT A UEBER DIE GRUBE!':sallyHelp==='spikes'?'SPRINGE MIT A UEBER DIE DORNEN!':'VERSUCHE ES MIT EINEM SPRUNG!',87,80,5,G[0],'center');txt('A ODER B: WEITER',80,91,5,G[1],'center')}
+  if(sallyHint){
+    sally(21,107);
+    txt(sallyHintRepeat?'DU KENNST DIE FALLE DOCH SCHON!':sallyHelp==='spikes'?'PASS AUF DIE DORNEN AUF!':'DU SCHAFFST DAS!',94,108,4,G[0],'center');
+    txt(sallyHintRepeat?'ICH ERKLAERE ES NOCH EINMAL.':'ICH ZEIGE DIR DEN SPRUNG.',94,115,4,G[0],'center');
+    txt(sallyHelp==='widePit'?'GROSSE LUECKEN: A LAENGER HALTEN!':sallyHelp==='pit'?'SPRINGE MIT A UEBER DIE GRUBE!':sallyHelp==='spikes'?'SPRINGE MIT A UEBER DIE DORNEN!':'VERSUCHE ES MIT EINEM SPRUNG!',94,122,4,G[0],'center');
+    txt('A ODER B: WEITER',94,130,4,G[0],'center');
+  }
   if(sallyIntro){rect(7,45,146,55,G[0]);rect(9,47,142,51,G[3]);sally(16,61);const lines=sallyIntroLines();txt(lines[introPage][0],84,66,6,G[0],'center');txt(lines[introPage][1],84,77,6,G[0],'center');txt('A ODER B: WEITER',80,91,5,G[1],'center')}
   if(paused){rect(12,27,136,90,G[0]);rect(14,29,132,86,G[3]);if(pauseScreen==="main"){txt("PAUSE",80,41,9,G[0],"center");const opts=["WEITERSPIELEN","STEUERUNG"];if(sallyMet)opts.push("SALLYS TIPPS");opts.forEach((v,i)=>{if(i===pauseChoice)rect(25,47+i*17,110,13,G[1]);txt((i===pauseChoice?"> ":"  ")+v,80,56+i*17,7,i===pauseChoice?G[3]:G[0],"center")});txt("PFEILE + A: AUSWAHL",80,105,5,G[1],"center")}else if(pauseScreen==="controls"){txt("STEUERUNG",80,43,8,G[0],"center");txt("PFEILE: BEWEGEN",80,59,6,G[0],"center");txt("A: SPRINGEN",80,71,6,G[0],"center");txt("B: WERKZEUG BENUTZEN",80,83,6,G[0],"center");txt("START: PAUSE",80,95,6,G[0],"center");txt("B: ZURUECK",80,107,5,G[1],"center")}else{txt("SALLYS TIPPS",80,43,8,G[0],"center");if(!sallyTips.length){txt("SALLY HAT DIR NOCH",80,62,5,G[0],"center");txt("KEINE TIPPS GEGEBEN.",80,71,5,G[0],"center");txt("B: ZURUECK",80,88,5,G[1],"center")}else{const start=Math.max(0,Math.min(sallyTipScroll,sallyTips.length-1));for(let i=0;i<3;i++){const idx=start+i;if(idx<sallyTips.length)txt((idx+1)+". "+sallyTips[idx],80,57+i*12,5,G[0],"center")}txt("TIPP "+(start+1)+"/"+sallyTips.length,80,94,5,G[1],"center");}txt("PFEILE: LESEN  B: ZURUECK",80,105,5,G[1],"center")}}
 }
@@ -230,7 +240,7 @@ function update(){
   // Am Ausgang wird nicht mehr automatisch gewechselt: erst die passende Entscheidung anzeigen.
   if(bush.cleared&&sallyMet&&player.x>=700){player.x=700;player.vx=0;scene='exitchoice';}
 }
-function render(){ctx.clearRect(0,0,160,144);if(scene==='title')title();else if(scene==='level')drawLevel();else if(scene==='exitchoice'){drawLevel();rect(5,39,150,65,G[0]);rect(7,41,146,61,G[3]);if(allLevelFindsCollected()){txt('ALLES GEFUNDEN!',80,56,8,G[0],'center');txt('LEVEL VERLASSEN?',80,70,7,G[0],'center');txt('A: JA, WEITER',80,87,7,G[1],'center')}else{txt('HIER GIBT ES NOCH',80,53,7,G[0],'center');txt('ETWAS ZU ENTDECKEN!',80,63,7,G[0],'center');txt('A: LEVEL VERLASSEN',80,78,6,G[1],'center');txt('B: WEITER ERKUNDEN',80,90,6,G[1],'center')}}else if(scene==='gameover'){drawBG(0);rect(10,16,140,112,G[0]);rect(12,18,136,108,G[3]);txt('GAME OVER',80,32,12,G[0],'center');txt('ALLE LEBEN VERLOREN',80,43,5,G[0],'center');const opts=['NEU STARTEN','ZUM TITEL','LEVEL-CODE'];opts.forEach((v,i)=>{if(i===gameoverChoice)rect(25,54+i*17,110,13,G[1]);txt((i===gameoverChoice?'> ':'  ')+v,80,63+i*17,7,i===gameoverChoice?G[3]:G[0],'center')});txt('TESTCODE: WALD1',80,112,5,G[1],'center');txt('PFEILE + A/B',80,120,5,G[1],'center')}else{drawBG(0);rect(15,32,130,75,G[2]);txt('LEVEL GESCHAFFT!',80,53,10,G[0],'center');txt('WALDLICHTUNG',80,68,7,G[0],'center');txt('PROTOTYP ENDE',80,83,6,G[1],'center');txt('START: NEU STARTEN',80,99,5,G[0],'center')}}
+if(sallyIntro){rect(7,45,146,55,G[0]);rect(9,47,142,51,G[3]);sally(16,61);const lines=sallyIntroLines();txt(lines[introPage][0],84,66,6,G[0],'center');txt(lines[introPage][1],84,77,6,G[0],'center');txt('A ODER B: WEITER',80,91,5,G[1],'center')}
 function loop(){update();render();requestAnimationFrame(loop)}
 function press(k,on){if(on&&!keys[k]&&scene==='exitchoice'&&(k==='a'||k==='b')){if(k==='a'||(k==='b'&&!allLevelFindsCollected())){keys[k]=true;action();keys[k]=false;}return}if(on&&!keys[k]&&scene==='gameover'&&(k==='up'||k==='down')){gameoverChoice=(gameoverChoice+(k==='down'?1:2))%3;}if(on&&!keys[k]&&k==='a'&&scene==='level'&&!paused&&!sallyIntro&&!sallyHint&&messageTimer===0&&player.on){jumpQueued=true;landingSoundPending=true;playJumpSound();}keys[k]=on;const el=document.querySelector(`[data-key="${k}"]`);if(el)el.classList.toggle('down',on);if(!on)return;if(k==='start'){if(scene==='title')action();else if(scene==='complete')action();else if(scene==='gameover')confirmGameoverChoice();else if(!sallyIntro&&!sallyHint){if(!paused){paused=true;pauseScreen="main";pauseChoice=0}else if(pauseScreen!=="main"){pauseScreen="main"}else paused=false;}return}if((k==='a'||k==='b')&&scene==='title'){action();return}if(paused&&pauseScreen==="main"&&(k==="up"||k==="down")){const menuCount=sallyMet?3:2;pauseChoice=(pauseChoice+(k==="down"?1:menuCount-1))%menuCount;return}if(paused&&pauseScreen==="tips"&&(k==="up"||k==="down")){if(sallyTips.length){sallyTipScroll=Math.max(0,Math.min(Math.max(0,sallyTips.length-3),sallyTipScroll+(k==="down"?1:-1)))}return}if((k==='a'||k==='b')&&paused){if(pauseScreen==="main"){if(k==="b"){paused=false;return}if(pauseChoice===0){paused=false;return}if(pauseChoice===1){pauseScreen="controls";return}if(pauseChoice===2&&sallyMet){pauseScreen="tips";sallyTipScroll=Math.max(0,sallyTips.length-3);return}}else{if(k==="b"){pauseScreen="main";return}return}}if((k==='a'||k==='b')&&scene==='level'){if(sallyIntro||sallyHint||messageTimer>0||paused||k==='b')action()}if((k==='a'||k==='b')&&scene==='gameover')confirmGameoverChoice()}
   document.querySelectorAll('[data-key]').forEach(el=>{const k=el.dataset.key;el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);press(k,true)});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>el.addEventListener(ev,e=>{e.preventDefault();press(k,false)}))});
