@@ -115,9 +115,11 @@ function drawHud(){
     rect(0,0,160,16,G[3]);
   }
   if(forestHudValues.complete&&forestHudValues.naturalWidth){
-    const positions=lives>5?[1,8,15,22,29]:[5,12,19,26,33];
-    for(let i=0;i<Math.min(lives,5);i++){
-      const x=positions[i];
+    const count=Math.min(lives,5);
+    const groupWidth=count?count*6+(count-1):0;
+    const startX=lives>5?1:Math.round((44-groupWidth)/2);
+    for(let i=0;i<count;i++){
+      const x=startX+i*7;
       ctx.drawImage(forestHudValues,3+i*7,5,6,6,x,5,6,6);
     }
   }
@@ -162,17 +164,17 @@ function drawLevel(){
   
   if(sallyHint){
     sally(21,107);
-    txt(sallyHintRepeat?'DU KENNST DIE FALLE DOCH SCHON!':sallyHelp==='spikes'?'PASS AUF DIE DORNEN AUF!':'DU SCHAFFST DAS!',94,108,4,G[0],'center');
-    txt(sallyHintRepeat?'ICH ERKLAERE ES NOCH EINMAL.':'ICH ZEIGE DIR DEN SPRUNG.',94,115,4,G[0],'center');
-    txt(sallyHelp==='widePit'?'GROSSE LUECKEN: A LAENGER HALTEN!':sallyHelp==='pit'?'SPRINGE MIT A UEBER DIE GRUBE!':sallyHelp==='spikes'?'SPRINGE MIT A UEBER DIE DORNEN!':'VERSUCHE ES MIT EINEM SPRUNG!',94,122,4,G[0],'center');
-    txt('A ODER B: WEITER',94,130,4,G[0],'center');
+    txt(sallyHintRepeat?'DU KENNST DIE FALLE DOCH SCHON!':sallyHelp==='spikes'?'PASS AUF DIE DORNEN AUF!':'DU SCHAFFST DAS!',90,108,5,G[0],'center');
+    txt(sallyHintRepeat?'ICH ERKLAERE ES NOCH EINMAL.':'ICH ZEIGE DIR DEN SPRUNG.',90,115,5,G[0],'center');
+    txt(sallyHelp==='widePit'?'GROSSE LUECKEN: A LAENGER HALTEN!':sallyHelp==='pit'?'SPRINGE MIT A UEBER DIE GRUBE!':sallyHelp==='spikes'?'SPRINGE MIT A UEBER DIE DORNEN!':'VERSUCHE ES MIT EINEM SPRUNG!',90,122,5,G[0],'center');
+    txt('A ODER B: WEITER',90,130,5,G[0],'center');
   }
   if(sallyIntro){
     sally(21,108);
     const lines=sallyIntroLines();
-    txt(lines[introPage][0],94,112,4,G[0],'center');
-    txt(lines[introPage][1],94,120,4,G[0],'center');
-    txt('A ODER B: WEITER',94,130,4,G[0],'center');
+    txt(lines[introPage][0],90,112,5,G[0],'center');
+    txt(lines[introPage][1],90,120,5,G[0],'center');
+    txt('A ODER B: WEITER',90,130,5,G[0],'center');
   }
   if(paused){rect(12,27,136,90,G[0]);rect(14,29,132,86,G[3]);if(pauseScreen==="main"){txt("PAUSE",80,41,9,G[0],"center");const opts=["WEITERSPIELEN","STEUERUNG"];if(sallyMet)opts.push("SALLYS TIPPS");opts.forEach((v,i)=>{if(i===pauseChoice)rect(25,47+i*17,110,13,G[1]);txt((i===pauseChoice?"> ":"  ")+v,80,56+i*17,7,i===pauseChoice?G[3]:G[0],"center")});txt("PFEILE + A: AUSWAHL",80,105,5,G[1],"center")}else if(pauseScreen==="controls"){txt("STEUERUNG",80,43,8,G[0],"center");txt("PFEILE: BEWEGEN",80,59,6,G[0],"center");txt("A: SPRINGEN",80,71,6,G[0],"center");txt("B: WERKZEUG BENUTZEN",80,83,6,G[0],"center");txt("START: PAUSE",80,95,6,G[0],"center");txt("B: ZURUECK",80,107,5,G[1],"center")}else{txt("SALLYS TIPPS",80,43,8,G[0],"center");if(!sallyTips.length){txt("SALLY HAT DIR NOCH",80,62,5,G[0],"center");txt("KEINE TIPPS GEGEBEN.",80,71,5,G[0],"center");txt("B: ZURUECK",80,88,5,G[1],"center")}else{const start=Math.max(0,Math.min(sallyTipScroll,sallyTips.length-1));for(let i=0;i<3;i++){const idx=start+i;if(idx<sallyTips.length)txt((idx+1)+". "+sallyTips[idx],80,57+i*12,5,G[0],"center")}txt("TIPP "+(start+1)+"/"+sallyTips.length,80,94,5,G[1],"center");}txt("PFEILE: LESEN  B: ZURUECK",80,105,5,G[1],"center")}}
 }
