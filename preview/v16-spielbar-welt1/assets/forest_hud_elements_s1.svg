@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="16" viewBox="0 0 160 16" shape-rendering="crispEdges" role="img" aria-labelledby="title desc">
+<title id="title">HUD-Anzeigen – W1L08 Sturm</title>
+<desc id="desc">Fünf gleich große Cartridge-Symbole in einheitlicher 6×6-Pixel-Größe, mittig im 40-Pixel-Leben-Feld ausgerichtet und mit mindestens einem Pixel Abstand zueinander und zum HUD-Rahmen. Das Werkzeug-Fragezeichen ist zentriert. Levelkennung und Punktestand entsprechen der vorhandenen Referenz.</desc>
+<defs>
+  <g id="cartridge" fill="#202020">
+    <rect x="0" y="1" width="6" height="5"/>
+    <rect x="1" y="0" width="4" height="1"/>
+  </g>
+  <g id="cartridge-window" fill="#f4f4f4">
+    <rect x="2" y="2" width="2" height="2"/>
+  </g>
+</defs>
+<!-- Five identical 6×6 px life cartridges, centered in the 40 px life field with 1 px gaps. -->
+<g>
+  <use href="#cartridge" x="3" y="5"/><use href="#cartridge-window" x="3" y="5"/>
+  <use href="#cartridge" x="10" y="5"/><use href="#cartridge-window" x="10" y="5"/>
+  <use href="#cartridge" x="17" y="5"/><use href="#cartridge-window" x="17" y="5"/>
+  <use href="#cartridge" x="24" y="5"/><use href="#cartridge-window" x="24" y="5"/>
+  <use href="#cartridge" x="31" y="5"/><use href="#cartridge-window" x="31" y="5"/>
+</g>
+<g transform="translate(15.806 2.24) scale(.72)">
+  <g fill="none" stroke="#a0a0a0" stroke-width="1.15" stroke-linecap="round" stroke-linejoin="round" transform="translate(-3.2 0)">
+    <path d="M56.8 5.2Q57.2 3.4 59.7 3.4Q62.3 3.4 62.5 5.5Q62.6 7.1 60.4 8.3Q59.8 8.7 59.8 9.7"/>
+  </g>
+  <path d="M56.6 11.1Q57.8 10.8 58 11.8Q57 12.6 56.6 11.1Z" fill="#a0a0a0"/>
+</g>
+<g fill="#202020" font-family="monospace" font-size="6" font-weight="bold" text-rendering="geometricPrecision">
+  <text x="99" y="10.5" text-anchor="middle">W1L08 – Sturm</text>
+  <text x="142.5" y="10.5" text-anchor="middle">01250</text>
+</g>
+</svg>
